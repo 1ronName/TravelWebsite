@@ -1,0 +1,73 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}旅游业务管理系统{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-semibold" href="#">旅游业务管理系统</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="切换导航">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="topNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin:index' %}"><i class="bi bi-speedometer2 me-1"></i>后台首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tours:tour_list' %}"><i class="bi bi-search me-1"></i>旅游团查询</a>
+                </li>
+                {% if user.is_authenticated %}
+                    {% with user.groups.all|join:"," as group_names %}
+                        {% if 'front_desk' in group_names or '前台接待' in group_names %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'tours:tour_list' %}"><i class="bi bi-file-earmark-plus me-1"></i>申请登记</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'applications:balance_payment_list' %}"><i class="bi bi-cash-stack me-1"></i>余款登记</a></li>
+                        {% endif %}
+                        {% if 'route_manager' in group_names or '路线管理员' in group_names %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'admin:tours_route_changelist' %}"><i class="bi bi-map me-1"></i>路线管理</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'admin:tours_tourgroup_changelist' %}"><i class="bi bi-clipboard-data me-1"></i>旅游团管理</a></li>
+                        {% endif %}
+                        {% if 'finance_clerk' in group_names or '催款员工' in group_names %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'finance:export_today' %}"><i class="bi bi-download me-1"></i>财务导出</a></li>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="navbar-text text-white-50 me-3">{{ user.username }}</span>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'admin:logout' %}">退出</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'admin:login' %}">登录</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="container py-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="关闭"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

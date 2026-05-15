@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}旅游确认书{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <h1 class="h4 mb-1">旅游申请书确认</h1>
+                <div class="text-muted">申请单号：{{ application.id }}</div>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="window.print()">打印</button>
+        </div>
+
+        <!-- 团信息 -->
+        <h5 class="mb-3 mt-4">旅游团信息</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-4"><strong>团代码：</strong>{{ application.tour_group.code }}</div>
+            <div class="col-md-4"><strong>出发日期：</strong>{{ application.tour_group.start_date|date:'Y-m-d' }}</div>
+            <div class="col-md-4"><strong>路线：</strong>{{ application.tour_group.route.name }}</div>
+        </div>
+
+        <!-- 申请人信息 -->
+        <h5 class="mb-3 mt-4">申请人信息</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><strong>姓名：</strong>{{ application.contact_name }}</div>
+            <div class="col-md-2"><strong>性别：</strong>{{ application.get_gender_display }}</div>
+            <div class="col-md-3"><strong>出生日期：</strong>{{ application.birth_date|date:'Y-m-d' }}</div>
+            <div class="col-md-2"><strong>电话：</strong>{{ application.contact_phone }}</div>
+            <div class="col-md-4"><strong>Email：</strong>{{ application.email }}</div>
+            <div class="col-md-6"><strong>联系地址：</strong>{{ application.contact_address }}</div>
+            <div class="col-md-2"><strong>邮编：</strong>{{ application.postal_code }}</div>
+        </div>
+
+        <!-- 紧急联系人 -->
+        <h5 class="mb-3 mt-4">紧急联系人</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><strong>姓名：</strong>{{ application.emergency_contact_name }}</div>
+            <div class="col-md-2"><strong>关系：</strong>{{ application.emergency_contact_relation }}</div>
+            <div class="col-md-3"><strong>电话：</strong>{{ application.emergency_contact_phone }}</div>
+            <div class="col-md-4"><strong>地址：</strong>{{ application.emergency_contact_address }}</div>
+        </div>
+
+        <!-- 旅行人数 -->
+        <h5 class="mb-3 mt-4">旅行人数及费用</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-2"><strong>大人人数：</strong>{{ application.adult_count }}</div>
+            <div class="col-md-2"><strong>小孩人数：</strong>{{ application.child_count }}</div>
+            <div class="col-md-2"><strong>总人数：</strong>{{ application.participant_count }}</div>
+            <div class="col-md-2"><strong>成人价：</strong>¥{{ application.tour_group.price_adult }}</div>
+            <div class="col-md-2"><strong>儿童价：</strong>¥{{ application.tour_group.price_child }}</div>
+            <div class="col-md-2"><strong>总费用：</strong>¥{{ application.total_amount }}</div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- 支付信息 -->
+        <h5 class="mb-3">支付信息</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><strong>订金金额：</strong>¥{{ application.deposit_amount }}</div>
+            <div class="col-md-3"><strong>订金单号：</strong>{{ application.deposit_receipt_no }}</div>
+            <div class="col-md-3"><strong>订金支付日期：</strong>{{ application.deposit_paid_at|date:'Y-m-d' }}</div>
+        </div>
+
+        {% if application.balance_paid %}
+            <div class="alert alert-success mb-0">
+                <strong>余款已支付！</strong> 该申请单已全款完成。
+            </div>
+        {% else %}
+            <div class="row g-3">
+                <div class="col-md-3"><strong>余款金额：</strong>¥{{ application.balance_amount_due }}</div>
+                <div class="col-md-3"><strong>支付期限：</strong>{{ application.balance_due_date|date:'Y-m-d' }}</div>
+                <div class="col-md-3"><strong>余款状态：</strong><span class="badge bg-warning">待支付</span></div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

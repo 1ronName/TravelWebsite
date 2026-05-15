@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}旅游团查询{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <h1 class="h4 mb-3">旅游团查询</h1>
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label" for="route_name">路线名称/目的地</label>
+                <input type="text" class="form-control" id="route_name" name="route_name" value="{{ request.GET.route_name }}" placeholder="例如：海南 或 海岛">
+            </div>
+            <div class="col-md-5">
+                <label class="form-label" for="start_date_after">出发日期从</label>
+                <input type="date" class="form-control" id="start_date_after" name="start_date_after" value="{{ request.GET.start_date_after }}">
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary">筛选</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>团代码</th>
+                    <th>路线</th>
+                    <th>出发日期</th>
+                    <th>截止日期</th>
+                    <th>限额</th>
+                    <th>成人价</th>
+                    <th>儿童价</th>
+                    <th>余位</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in tour_groups %}
+                    <tr>
+                        <td class="fw-semibold">{{ group.code }}</td>
+                        <td>
+                            <div>{{ group.route.name }}</div>
+                            <small class="text-muted">{{ group.route.destination }}</small>
+                        </td>
+                        <td>{{ group.start_date|date:'Y-m-d' }}</td>
+                        <td>{{ group.deadline|date:'Y-m-d' }}</td>
+                        <td>{{ group.max_capacity }}</td>
+                        <td>¥{{ group.price_adult }}</td>
+                        <td>¥{{ group.price_child }}</td>
+                        <td>{{ group.remaining_seats_value }}</td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-primary" href="{% url 'applications:application_create' group.id %}">申请</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-5">暂无符合条件的旅游团</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}参加者录入{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h1 class="h4 mb-1">参加者录入</h1>
+                <div class="text-muted">申请单号：{{ application.id }}，团代码：{{ application.tour_group.code }}</div>
+            </div>
+            <button type="button" class="btn btn-outline-secondary" id="add-participant">新增一行</button>
+        </div>
+
+        <form method="post" id="participant-form">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="participant-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>姓名</th>
+                            <th>证件号</th>
+                            <th>是否联系人</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset %}
+                            <tr class="participant-row">
+                                <td>{{ form.full_name }}</td>
+                                <td>{{ form.id_card }}</td>
+                                <td class="text-center">{{ form.is_contact }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <template id="empty-form-template">
+                <tr class="participant-row">
+                    <td>{{ formset.empty_form.full_name }}</td>
+                    <td>{{ formset.empty_form.id_card }}</td>
+                    <td class="text-center">{{ formset.empty_form.is_contact }}</td>
+                </tr>
+            </template>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">作业演示建议至少录入 3 名参加者。</small>
+                <button type="submit" class="btn btn-primary">保存参加者</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(() => {
+    const addButton = document.getElementById('add-participant');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+    const tableBody = document.querySelector('#participant-table tbody');
+    const template = document.getElementById('empty-form-template').innerHTML;
+
+    addButton.addEventListener('click', () => {
+        const formIndex = parseInt(totalForms.value, 10);
+        const newRow = template.replaceAll('__prefix__', formIndex);
+        tableBody.insertAdjacentHTML('beforeend', newRow);
+        totalForms.value = formIndex + 1;
+    });
+})();
+</script>
+{% endblock %}

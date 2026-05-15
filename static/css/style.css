@@ -1,0 +1,29 @@
+body {
+    background:
+        radial-gradient(circle at top left, rgba(13, 110, 253, 0.10), transparent 28%),
+        radial-gradient(circle at top right, rgba(32, 201, 151, 0.08), transparent 24%),
+        #f8f9fa;
+}
+
+.navbar-brand {
+    letter-spacing: 0.04em;
+}
+
+.card {
+    border-radius: 1rem;
+}
+
+.table thead th {
+    white-space: nowrap;
+}
+
+.table tbody td {
+    vertical-align: middle;
+}
+
+.btn,
+.form-control,
+.form-select,
+.card {
+    border-radius: 0.85rem;
+}

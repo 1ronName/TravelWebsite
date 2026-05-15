@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}余款支付登记{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <h1 class="h4 mb-3">余款支付登记</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>申请单</th>
+                            <th>责任人</th>
+                            <th>团代码</th>
+                            <th>交款单编号</th>
+                            <th>支付金额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for application in applications %}
+                            <tr>
+                                <td>{{ application.id }}</td>
+                                <td>{{ application.contact_name }}</td>
+                                <td>{{ application.tour_group.code }}</td>
+                                <td><input type="text" class="form-control" name="receipt_no_{{ application.id }}" value="{{ application.balance_receipt_no }}"></td>
+                                <td><input type="number" step="0.01" class="form-control" name="amount_{{ application.id }}" value="{{ application.balance_amount_due }}"></td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted py-4">暂无未支付余款的申请单</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">保存登记</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

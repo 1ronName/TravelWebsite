@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}申请详情{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+                <h1 class="h4 mb-1">申请详情</h1>
+                <div class="text-muted">申请单号：{{ application.id }}，状态：{{ application.get_status_display }}</div>
+            </div>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-secondary" href="{% url 'applications:print_confirm' application.id %}">打印</a>
+                <a class="btn btn-outline-primary" href="{% url 'applications:participant_entry' application.id %}">录入参加者</a>
+            </div>
+        </div>
+
+        <!-- 团信息 -->
+        <h5 class="mb-3 mt-4">旅游团信息</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6"><strong>团代码：</strong>{{ application.tour_group.code }}</div>
+            <div class="col-md-6"><strong>出发日期：</strong>{{ application.tour_group.start_date|date:'Y-m-d' }}</div>
+        </div>
+
+        <!-- 申请人信息 -->
+        <h5 class="mb-3 mt-4">申请人信息</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><strong>姓名：</strong>{{ application.contact_name }}</div>
+            <div class="col-md-2"><strong>性别：</strong>{{ application.get_gender_display }}</div>
+            <div class="col-md-3"><strong>出生日期：</strong>{{ application.birth_date|date:'Y-m-d'|default:'-' }}</div>
+            <div class="col-md-2"><strong>电话：</strong>{{ application.contact_phone }}</div>
+            <div class="col-md-4"><strong>Email：</strong>{{ application.email|default:'-' }}</div>
+            <div class="col-md-6"><strong>联系地址：</strong>{{ application.contact_address|default:'-' }}</div>
+            <div class="col-md-2"><strong>邮编：</strong>{{ application.postal_code|default:'-' }}</div>
+        </div>
+
+        <!-- 紧急联系人 -->
+        {% if application.emergency_contact_name %}
+        <h5 class="mb-3 mt-4">紧急联系人</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><strong>姓名：</strong>{{ application.emergency_contact_name }}</div>
+            <div class="col-md-2"><strong>关系：</strong>{{ application.emergency_contact_relation }}</div>
+            <div class="col-md-3"><strong>电话：</strong>{{ application.emergency_contact_phone }}</div>
+            <div class="col-md-4"><strong>地址：</strong>{{ application.emergency_contact_address }}</div>
+        </div>
+        {% endif %}
+
+        <!-- 旅行人数 -->
+        <h5 class="mb-3 mt-4">旅行人数</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><strong>大人人数：</strong>{{ application.adult_count }}</div>
+            <div class="col-md-3"><strong>小孩人数：</strong>{{ application.child_count }}</div>
+            <div class="col-md-3"><strong>总人数：</strong>{{ application.participant_count }}</div>
+            <div class="col-md-3"><strong>总费用：</strong>¥{{ application.total_amount }}</div>
+        </div>
+
+        <!-- 支付信息 -->
+        <h5 class="mb-3 mt-4">支付信息</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><strong>订金金额：</strong>¥{{ application.deposit_amount }}</div>
+            <div class="col-md-3"><strong>订金单号：</strong>{{ application.deposit_receipt_no|default:'-' }}</div>
+            <div class="col-md-3"><strong>订金支付日期：</strong>{{ application.deposit_paid_at|date:'Y-m-d'|default:'-' }}</div>
+            <div class="col-md-3"><strong>已收订金：</strong>{{ application.deposit_paid|yesno:'是,否' }}</div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-3"><strong>余款金额：</strong>¥{{ application.balance_amount_due }}</div>
+            <div class="col-md-3"><strong>余款单号：</strong>{{ application.balance_receipt_no|default:'-' }}</div>
+            <div class="col-md-3"><strong>余款支付日期：</strong>{{ application.balance_paid_at|date:'Y-m-d'|default:'-' }}</div>
+            <div class="col-md-3"><strong>已收余款：</strong>{{ application.balance_paid|yesno:'是,否' }}</div>
+        </div>
+
+        <hr class="my-4">
+
+        <form method="post" action="{% url 'applications:cancel_application' application.id %}" onsubmit="return confirm('确认取消该申请吗？');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">取消申请</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
