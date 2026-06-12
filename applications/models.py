@@ -94,7 +94,7 @@ class Application(models.Model):
         1-9天（10天到1天）：50%
         ≤0天（出发当天）：全款（100%）
         """
-        days_before_departure = (self.tour_group.start_date - timezone.localtime()).days
+        days_before_departure = (self.tour_group.start_date - timezone.localdate()).days
         if days_before_departure >= 30:
             ratio = Decimal("0.00")
         elif days_before_departure >= 10:
@@ -135,7 +135,7 @@ class Application(models.Model):
         if not self.balance_due_date:
             self.balance_due_date = self.tour_group.deadline
         if self.balance_paid and not self.balance_amount:
-            self.balance_amount = self.balance_amount_due
+            self.balance_amount = max(self.total_amount - self.deposit_amount, Decimal("0.00"))
         super().save(*args, **kwargs)
 
 
