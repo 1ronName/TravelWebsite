@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.shortcuts import render
 from django.utils import timezone
@@ -5,6 +6,8 @@ from django.utils import timezone
 from applications.models import Application
 
 from .models import TourGroup
+
+ITEMS_PER_PAGE = 20
 
 
 def tour_list(request):
@@ -39,4 +42,11 @@ def tour_list(request):
             group.remaining_seats_value = remaining
             tour_groups.append(group)
 
-    return render(request, 'tours/tour_list.html', {'tour_groups': tour_groups})
+    paginator = Paginator(tour_groups, ITEMS_PER_PAGE)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'tours/tour_list.html', {
+        'tour_groups': page_obj.object_list,
+        'page_obj': page_obj,
+    })
